@@ -1,0 +1,23 @@
+:root {
+  color-scheme: dark;
+  font-family: "Be Vietnam Pro", "Segoe UI", Arial, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --color-canvas: #090a0e;
+  --color-surface: #111319;
+  --color-surface-raised: #191c24;
+  --color-text: #f4f4f5;
+  --color-text-muted: #a5a7af;
+  --color-border: rgb(255 255 255 / 0.14);
+  --color-accent: #8b5cf6;
+  --color-accent-strong: #7447e8;
+  --focus-ring: #ffffff;
+  --radius-card: 14px;
+  --radius-control: 12px;
+  --topbar-height: 76px;
+  --page-gutter: clamp(40px, 4vw, 80px);
+  --ease-tv: cubic-bezier(0.16, 1, 0.3, 1);
+  --z-content: 1;
+  --z-topbar: 20;
+  --z-toast: 30;
+}

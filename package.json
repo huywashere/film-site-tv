@@ -1,0 +1,33 @@
+{
+  "name": "netphim-tv",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @netphim/tv-ui dev",
+    "build": "pnpm --filter @netphim/tv-ui build",
+    "preview": "pnpm --filter @netphim/tv-ui preview",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "check:release": "pnpm check && pnpm test:e2e"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.62.1",
+    "@types/node": "22.20.1",
+    "eslint": "10.10.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.6",
+    "globals": "17.12.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0",
+    "vitest": "5.0.0"
+  }
+}

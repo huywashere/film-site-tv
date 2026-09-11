@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  title: NetPhim TV API
+  version: 1.0.0-draft
+servers:
+  - url: https://api.netphim.app
+paths:
+  /api/v1/tv/home:
+    get:
+      operationId: getTvHome
+      responses:
+        "200":
+          description: Composed TV home feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TvHomeEnvelope"
+  /api/v1/tv/playback/session:
+    post:
+      operationId: createTvPlaybackSession
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [movieId]
+              properties:
+                movieId:
+                  type: string
+                episodeId:
+                  type: string
+      responses:
+        "200":
+          description: Short-lived ordered playback sources
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ImageAsset:
+      type: object
+      required: [src, alt]
+      properties:
+        src:
+          type: string
+          format: uri-reference
+        alt:
+          type: string
+    MovieSummary:
+      type: object
+      required: [id, slug, title, poster]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        originalTitle:
+          type: string
+        year:
+          type: integer
+        quality:
+          type: string
+        progressPercent:
+          type: number
+          minimum: 0
+          maximum: 100
+        poster:
+          $ref: "#/components/schemas/ImageAsset"
+    TvHomeEnvelope:
+      type: object
+      required: [data]
+      properties:
+        requestId:
+          type: string
+        data:
+          type: object
+          required: [hero, sections, generatedAt]
+          properties:
+            hero:
+              allOf:
+                - $ref: "#/components/schemas/MovieSummary"
+                - type: object
+                  required: [description, genres]
+                  properties:
+                    description:
+                      type: string
+                    durationLabel:
+                      type: string
+                    genres:
+                      type: array
+                      items:
+                        type: string
+            sections:
+              type: array
+              items:
+                type: object
+                required: [id, title, items]
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/MovieSummary"
+            generatedAt:
+              type: string
+              format: date-time
