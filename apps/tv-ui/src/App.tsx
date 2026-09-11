@@ -6,6 +6,7 @@ import { MovieRail } from "./components/movie-rail";
 import { TvPlayer } from "./components/player/tv-player";
 import { TopNavigation } from "./components/top-navigation";
 import { resolvePlaybackItem } from "./data/playback-fixtures";
+import { fetchRealPlaybackItem } from "./data/movie-provider";
 import { useHomeFeed } from "./hooks/use-home-feed";
 import { useRemoteNavigation } from "./hooks/use-remote-navigation";
 import type { TvPlaybackItem } from "./types/playback";
@@ -15,6 +16,7 @@ export function App() {
   const [announcement, setAnnouncement] = useState("");
   const [playbackItem, setPlaybackItem] = useState<TvPlaybackItem | null>(null);
   const lastFocusIdRef = useRef<string | null>(null);
+  const playbackSessionRef = useRef(0);
 
   const ready = feed.status !== "loading" && !playbackItem;
   useRemoteNavigation(ready);
@@ -23,14 +25,28 @@ export function App() {
     setAnnouncement(`${message}. Tính năng đang được kết nối.`);
   };
 
-  const startPlayback = (movie: MovieSummary) => {
+  const startPlayback = async (movie: MovieSummary) => {
     const activeElement = document.activeElement as HTMLElement | null;
     lastFocusIdRef.current = activeElement?.dataset.focusId ?? null;
-    const resolved = resolvePlaybackItem(movie);
-    setPlaybackItem(resolved);
+    const currentSession = ++playbackSessionRef.current;
+
+    // 1. Initial responsive open
+    const initial = resolvePlaybackItem(movie);
+    setPlaybackItem(initial);
+
+    // 2. Fetch real episodes and real m3u8 stream
+    try {
+      const realItem = await fetchRealPlaybackItem(movie);
+      if (playbackSessionRef.current === currentSession) {
+        setPlaybackItem(realItem);
+      }
+    } catch {
+      // Keep initial stream
+    }
   };
 
   const closePlayback = () => {
+    playbackSessionRef.current = 0;
     setPlaybackItem(null);
     window.setTimeout(() => {
       if (lastFocusIdRef.current) {

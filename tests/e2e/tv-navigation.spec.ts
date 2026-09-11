@@ -4,7 +4,8 @@ test("loads local artwork and navigates from menu to a movie rail", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Thành Phố Sau Mưa" })).toBeVisible();
+  const heroHeading = page.locator("#hero-title");
+  await expect(heroHeading).toBeVisible();
 
   await expect
     .poll(() =>
@@ -37,7 +38,9 @@ test("opens Netflix-grade TV Player on hero play and exits with Escape", async (
   page,
 }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Thành Phố Sau Mưa" })).toBeVisible();
+  const heroHeading = page.locator("#hero-title");
+  await expect(heroHeading).toBeVisible();
+  const heroTitle = await heroHeading.innerText();
 
   // Navigate to Hero "Xem ngay" button and press Enter
   await page.locator("[data-focus-id='hero-play']").click();
@@ -45,7 +48,7 @@ test("opens Netflix-grade TV Player on hero play and exits with Escape", async (
   // Verify Player region is rendered
   const player = page.getByRole("region", { name: "Trình phát video NetPhim TV" });
   await expect(player).toBeVisible();
-  await expect(player.locator(".tv-player__movie-title")).toHaveText("Thành Phố Sau Mưa");
+  await expect(player.locator(".tv-player__movie-title")).toHaveText(heroTitle);
   await expect(player.locator("[data-focus-id='player-play']")).toBeVisible();
 
   // Press Escape to exit Player
@@ -53,5 +56,5 @@ test("opens Netflix-grade TV Player on hero play and exits with Escape", async (
 
   // Verify Player is closed and Home is restored
   await expect(player).not.toBeVisible();
-  await expect(page.getByRole("heading", { name: "Thành Phố Sau Mưa" })).toBeVisible();
+  await expect(heroHeading).toBeVisible();
 });
